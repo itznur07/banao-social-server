@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const cors = require("cors");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 require("dotenv").config();
 
-/** MIddleware */
+/** Middleware */
 app.use(cors());
 app.use(express.json());
 
@@ -24,12 +24,24 @@ async function run() {
   try {
     // collections
     const usersCollection = client.db("banao").collection("users");
+    const postsCollection = client.db("banao").collection("posts");
 
     /** User Post API */
     app.post("/users", async (req, res) => {
       const user = req.body;
-      console.log(user);
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    app.post("/posts", async (req, res) => {
+      const post = req.body;
+      const result = await postsCollection.insertOne(post);
+      res.send(result);
+    });
+
+    /** Post Get Data */
+    app.get("/posts", async (req, res) => {
+      const result = await postsCollection.find().toArray();
       res.send(result);
     });
 
