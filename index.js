@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 /** Middleware */
@@ -42,6 +42,14 @@ async function run() {
     /** Post Get Data */
     app.get("/posts", async (req, res) => {
       const result = await postsCollection.find().toArray();
+      res.send(result);
+    });
+
+    /** Delete Post */
+    app.delete("/posts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await postsCollection.deleteOne(query);
       res.send(result);
     });
 
